@@ -1,13 +1,12 @@
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
     Avatar,
     Box,
     Button,
-    Checkbox,
     Container,
     CssBaseline,
-    FormControlLabel,
     Grid,
     TextField,
     ThemeProvider,
@@ -15,18 +14,35 @@ import {
     createTheme
 } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 import { Copyright } from './Copyright';
+import { useState } from 'react';
+import { useAxios } from '../hooks/useAxios';
 
 const defaultTheme = createTheme();
 
-export const Signup =  function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+export const Signup = function SignUp() {
+    const { enqueueSnackbar } = useSnackbar();
+    const api = useAxios();
+    const navigate = useNavigate();
+    const [buttonDisabled, setButtonDisabled] = useState(false);
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        setButtonDisabled(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const payload = {
+        firstName: data.get('firstName'),
+        lastName: data.get('lastName'),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        email: data.get('email'),
+        password: data.get('password'),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+    }
+      const result = await api.post(`/user/new`, payload);
+      if (result.status === 200) {
+          enqueueSnackbar({ variant: 'success', message: 'succesfully created account' });
+      }
+        setTimeout(() => {
+            navigate('/');
+        }, 1000);
   };
 
   return (
@@ -97,6 +113,7 @@ export const Signup =  function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={buttonDisabled}
             >
               Sign Up
             </Button>

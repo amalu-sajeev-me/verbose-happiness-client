@@ -1,5 +1,4 @@
 
-import * as React from 'react';
 import { Copyright } from './Copyright';
 import {
     createTheme,
@@ -10,25 +9,33 @@ import {
     Avatar,
     Typography,
     TextField,
-    FormControlLabel,
-    Checkbox,
     Button,
     Grid,
 } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAxios } from '../hooks/useAxios';
 
 
 const defaultTheme = createTheme();
 
 export const Login = function () {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+      const api = useAxios();
+      const navigate = useNavigate();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+
+      const payload = {
+          email: data.get('email'),
+          password: data.get('password'),
+      };
+      const result = await api.post(`/user/login`, payload);
+      if (result) {
+          localStorage.setItem('auth-token', result.data.token);
+          navigate('/dashboard');
+      }
+      console.log({result})
   };
 
   return (
