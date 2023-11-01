@@ -36,6 +36,7 @@ export const Signup = function SignUp() {
         email: data.get('email'),
         password: data.get('password'),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
     }
+      console.log('reg-payload', payload)
       const result = await api.post(`/user/new`, payload);
       if (result.status === 200) {
           enqueueSnackbar({ variant: 'success', message: 'succesfully created account' });

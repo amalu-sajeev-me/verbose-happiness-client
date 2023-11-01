@@ -23,19 +23,27 @@ export const Login = function () {
       const api = useAxios();
       const navigate = useNavigate();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+    event.preventDefault();
+    console.log('submitting')
       const data = new FormData(event.currentTarget);
 
       const payload = {
           email: data.get('email'),
           password: data.get('password'),
       };
+    console.log('payload set', payload)
+    try { 
       const result = await api.post(`/user/login`, payload);
+      console.log({ result })
+      console.log('lolop')
       if (result) {
           localStorage.setItem('auth-token', result.data.token);
           navigate('/dashboard');
       }
-      console.log({result})
+    } catch (err) {
+      console.log({ err });
+    }
+    
   };
 
   return (
