@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAxios } from '../hooks/useAxios';
+import { IApiResponse, useAxios } from '../hooks/useAxios';
 
 
 const defaultTheme = createTheme();
@@ -24,20 +24,19 @@ export const Login = function () {
       const navigate = useNavigate();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('submitting')
       const data = new FormData(event.currentTarget);
-
       const payload = {
           email: data.get('email'),
           password: data.get('password'),
       };
     console.log('payload set', payload)
     try { 
-      const result = await api.post(`/user/login`, payload);
-      console.log({ result })
-      console.log('lolop')
-      if (result) {
-          localStorage.setItem('auth-token', result.data.token);
+      const {
+        responseData,
+        status
+      } = (await api.post(`/user/login`, payload)).data as IApiResponse<Record<'token', string>>;
+      if (status === 'success') {
+          localStorage.setItem('auth-token', responseData.token);
           navigate('/dashboard');
       }
     } catch (err) {

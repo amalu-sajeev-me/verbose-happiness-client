@@ -1,6 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
 
+export interface IApiResponse<TData = Record<string, unknown>>{
+    responseData: TData;
+    status: 'success' | 'failure';
+    message: string;
+}
+
 export const useAxios = (multipart?: boolean) => {
     const { REACT_APP_API_URL } = process.env;
     if (!REACT_APP_API_URL) throw new Error('base url not set');

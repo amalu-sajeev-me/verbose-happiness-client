@@ -1,18 +1,15 @@
-import { Box } from "@mui/material";
-import { FileUpload } from "./FileUpload";
-import { createBrowserRouter, RouterProvider, Route, Outlet } from 'react-router-dom';
+import { Box, Divider } from "@mui/material";
+import { Outlet } from 'react-router-dom';
+import { Breadcrumbs } from "./Breadcrumbs";
 
-const routes = createBrowserRouter([
-    {
-        path: 'upload',
-        element: <FileUpload />
-    }
-])
 
 export const Page = () => {
     return (
         <Box minHeight="90vh">
-            page
+            <Breadcrumbs />
+            <Box height={32} />
+            <Divider />
+            <Box height={32} />
             <Outlet />
         </Box>
     );

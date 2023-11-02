@@ -4,6 +4,7 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useAxios } from "../hooks/useAxios";
 import { Loader } from "./Loader";
+import { Link } from "react-router-dom";
 
 export const FileUpload = () => {
     const api = useAxios(true);
@@ -27,7 +28,8 @@ export const FileUpload = () => {
         console.log({ result });
     }
     return (
-        <Box display="flex" flexDirection="row"
+        <Box>
+            <Box display="flex" flexDirection="row"
             gap={1}
             alignItems="center"
             alignContent="center"
@@ -47,6 +49,10 @@ export const FileUpload = () => {
                     Upload
             </Button>
             <Loader open={loading} />
+            </Box>
+            <Box>
+                <Link to="../files" >view all files</Link>
+            </Box>
         </Box>
     );
 }
