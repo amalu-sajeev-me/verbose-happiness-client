@@ -1,4 +1,17 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, AlertTitle, FormGroup, TextField, ToggleButton, FormControlLabel, Switch, Checkbox, Typography } from '@mui/material';
+import {
+    Alert,
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    AlertTitle,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Typography
+} from '@mui/material';
 import React, { useState } from "react";
 import { PageSelectionBox } from "./PageSelectionBox";
 import { useNavigate } from "react-router-dom";
