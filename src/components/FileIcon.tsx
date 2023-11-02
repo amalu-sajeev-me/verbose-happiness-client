@@ -1,7 +1,6 @@
-import { Article, CheckBox, PageviewOutlined, PictureAsPdfTwoTone } from "@mui/icons-material";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Tooltip, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { PageSelectionBox } from "./PageSelectionBox";
+import { PictureAsPdfTwoTone } from "@mui/icons-material";
+import { Box, Tooltip, Typography } from "@mui/material";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 interface IFileIconProps {
