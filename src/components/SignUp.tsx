@@ -17,16 +17,20 @@ import { useSnackbar } from 'notistack';
 import { Copyright } from './Copyright';
 import { useState } from 'react';
 import { useAxios } from '../hooks/useAxios';
+import { Loader } from './Loader';
+import { IAPIResponse } from '../types/APIResponse.type';
 
 const defaultTheme = createTheme();
 
 export const Signup = function SignUp() {
-    const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState<boolean>(false);
     const api = useAxios();
     const navigate = useNavigate();
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        setButtonDisabled(true);
+      setButtonDisabled(true);
+      setLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const payload = {
@@ -35,14 +39,33 @@ export const Signup = function SignUp() {
         email: data.get('email'),
         password: data.get('password'),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
     }
-      console.log('reg-payload', payload)
-      const result = await api.post(`/user/new`, payload);
-      if (result.status === 200) {
-          enqueueSnackbar({ variant: 'success', message: 'succesfully created account' });
+    try {
+        const {data: apiResponse} = await api.post(`/user/new`, payload, {validateStatus: () => true});
+        const { statusCode, responseData } = apiResponse as IAPIResponse;
+          if (statusCode === 200) {
+          setLoading(false);
+          enqueueSnackbar(
+            {
+              variant: 'success',
+              message: 'succesfully created account'
+            });
+          setTimeout(() => {
+              navigate('/');
+          }, 1000);
+        } else {
+            const { info } = responseData.error as { message: string;  info: string};
+            throw new Error(info);
+        }
+    } catch (error) {
+        const errmessage = error instanceof Error ? error.message : '';
+      setLoading(false);
+      setButtonDisabled(false);
+        enqueueSnackbar({
+              variant: 'error',
+              message: errmessage
+        });
       }
-        setTimeout(() => {
-            navigate('/');
-        }, 1000);
+        
   };
 
   return (
@@ -128,6 +151,7 @@ export const Signup = function SignUp() {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      <Loader open={loading} />
     </ThemeProvider>
   );
 }

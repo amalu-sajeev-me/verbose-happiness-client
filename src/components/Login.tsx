@@ -15,32 +15,40 @@ import {
 import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { IApiResponse, useAxios } from '../hooks/useAxios';
+import { Loader } from './Loader';
+import { useState } from 'react';
+import { useSnackbar } from 'notistack';
 
 
 const defaultTheme = createTheme();
 
 export const Login = function () {
-      const api = useAxios();
-      const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState<boolean>(false);
+  const api = useAxios();
+  const navigate = useNavigate();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    try { 
+      event.preventDefault();
+      setLoading(true);
       const data = new FormData(event.currentTarget);
       const payload = {
           email: data.get('email'),
           password: data.get('password'),
       };
-    console.log('payload set', payload)
-    try { 
-      const {
-        responseData,
-        status
-      } = (await api.post(`/user/login`, payload)).data as IApiResponse<Record<'token', string>>;
-      if (status === 'success') {
+      const apiResponse = (await api.post(`/user/login`, payload, { validateStatus: Boolean }));
+      const {responseData} = apiResponse.data as IApiResponse<Record<'token', string>>;
+      if (apiResponse.status === 200) {
           localStorage.setItem('auth-token', responseData.token);
           navigate('/dashboard');
-      }
+      } else throw new Error('invalid credentials')
     } catch (err) {
-      console.log({ err });
+      const errorMessage = err instanceof Error ? err.message : 'error occured';
+      setLoading(false);
+      enqueueSnackbar({
+        variant: 'error',
+        message: errorMessage
+      });
     }
     
   };
@@ -103,6 +111,7 @@ export const Login = function () {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
+      <Loader open={loading} />
     </ThemeProvider>
   );
 }

@@ -3,20 +3,28 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAxios } from '../hooks/useAxios';
 import { FileIcon } from "./FileIcon";
+import { Loader } from "./Loader";
 
 type IFilesResponse = Record<'fileName', string>;
 type IQueryParams = Record<'pageNumber', string>;
 
 export const ViewFiles: React.FC = () => {
     const api = useAxios();
-    const {pageNumber = 1} = useParams<IQueryParams>();
+    const [loading, setLoading] = useState<boolean>(true);
+    const { pageNumber = 1 } = useParams<IQueryParams>();
+    const [pageCount, setPageCount] = useState<number>(0);
     const navigate = useNavigate();
     const [files, setFiles] = useState<null | IFilesResponse[]>(null);
     useEffect(() => {
         api.get(`/files/all/${pageNumber}`).then(response => {
             console.log({ response });
             const { data } = response;
-            setFiles(data as IFilesResponse[]);
+            const files = data.responseData.data as IFilesResponse[];
+            const totalPages = data.responseData.totalPages as number;
+            console.log(files);
+            setPageCount(totalPages);
+            setFiles(files);
+            setLoading(false);
         });
     }, [pageNumber]);
     const handlePagination = (_event: React.ChangeEvent<unknown>, page: number) => {
@@ -52,12 +60,13 @@ export const ViewFiles: React.FC = () => {
                 <Pagination
                     sx={{ position: 'fixed', bottom: '3rem' }}
                     page={Number(pageNumber)}
-                    count={10}
+                    count={pageCount}
                     onChange={handlePagination}
                     variant="outlined"
                     shape="rounded"
                 />
             </Box>
+            <Loader open={loading} />
         </Box>
     );
 }

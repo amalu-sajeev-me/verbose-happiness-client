@@ -2,7 +2,7 @@ import { Box, Button } from "@mui/material";
 import { MuiFileInput } from 'mui-file-input';
 import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { useAxios } from "../hooks/useAxios";
+import { IApiResponse, useAxios } from "../hooks/useAxios";
 import { Loader } from "./Loader";
 import { Link } from "react-router-dom";
 
@@ -20,12 +20,13 @@ export const FileUpload = () => {
         const form = new FormData();
         form.append('pdf-file', file);
         setLoading(true)
-        const result = await api.post('/files', form);
-        if (result.status == 200) {
+        const { data } = await api.post('/files', form);
+        const { statusCode } = data as IApiResponse;
+        if (statusCode == 200) {
             enqueueSnackbar({ variant: 'success', message: 'file uploaded succesfully' });
             setLoading(false);
         }
-        console.log({ result });
+        console.log({ data });
     }
     return (
         <Box>

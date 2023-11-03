@@ -4,6 +4,7 @@ import { useState } from 'react';
 export interface IApiResponse<TData = Record<string, unknown>>{
     responseData: TData;
     status: 'success' | 'failure';
+    statusCode: number;
     message: string;
 }
 

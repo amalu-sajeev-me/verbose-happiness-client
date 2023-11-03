@@ -1,4 +1,5 @@
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop } from "@mui/material";
+import { BallTriangle } from 'react-loader-spinner';
 import React from "react";
 
 interface ILoaderProps {
@@ -8,7 +9,7 @@ interface ILoaderProps {
 export const Loader:React.FC<ILoaderProps> = ({open}) => {
     return (
         <Backdrop open={open} sx={{zIndex: (theme)=>theme.zIndex.modal}}>
-            <CircularProgress />
+            <BallTriangle />
         </Backdrop>
     );
 }
