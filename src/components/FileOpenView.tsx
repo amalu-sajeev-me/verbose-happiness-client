@@ -14,11 +14,6 @@ import {
     IconButton,
     Divider,
     Tooltip,
-    TableContainer,
-    Table,
-    TableRow,
-    TableCell,
-    TableHead
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from "react";
 import { PageSelectionBox } from "./PageSelectionBox";
@@ -26,7 +21,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAxios } from '../hooks/useAxios';
 import { PDFDocument } from 'pdf-lib';
 import { Loader } from './Loader';
-import { ArrowBack, ArrowForward, Edit, PictureAsPdf } from '@mui/icons-material';
+import { ArrowBack, ArrowForward, Edit } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 
 export const FileOpenView: React.FC = () => {
