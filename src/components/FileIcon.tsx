@@ -1,15 +1,18 @@
 import { PictureAsPdfTwoTone } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface IFileIconProps {
     name: string;
+    fileId: string;
 }
-export const FileIcon: React.FC<IFileIconProps> = ({ name }) => {
+export const FileIcon: React.FC<IFileIconProps> = ({ name, fileId }) => {
     const navigate = useNavigate();
+    const params = useParams();
+    console.log(params)
     const onFileOpen = () => {
-        navigate('../../view/1');
+        navigate(`../../view/${fileId}`);
     }
     return (
         <Tooltip title="double click to open">

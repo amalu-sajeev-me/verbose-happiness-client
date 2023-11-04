@@ -5,7 +5,7 @@ import { useAxios } from '../hooks/useAxios';
 import { FileIcon } from "./FileIcon";
 import { Loader } from "./Loader";
 
-type IFilesResponse = Record<'fileName', string>;
+type IFilesResponse = Record<'fileName' | '_id', string>;
 type IQueryParams = Record<'pageNumber', string>;
 
 export const ViewFiles: React.FC = () => {
@@ -37,7 +37,7 @@ export const ViewFiles: React.FC = () => {
             <Box display="flex" flexDirection="row" gap={2}>
                 {files && files.map(file => {
                     return (
-                        <FileIcon name={file.fileName} key={file.fileName} />
+                        <FileIcon name={file.fileName} key={file._id} fileId={file._id} />
                     );
                 })}
             </Box>
