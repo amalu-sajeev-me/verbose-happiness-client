@@ -26,7 +26,7 @@ export const useAxios = (multipart?: boolean) => {
                 if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                     config.maxBodyLength = Infinity;
-                    config.headers['Content-Type'] = !!multipart
+                    config.headers['Content-Type'] = multipart
                         ? 'multipart/form-data'
                         : 'application/json';
                     config.headers.Accept = 'multipart/form-data';

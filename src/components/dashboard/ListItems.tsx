@@ -2,23 +2,44 @@ import * as React from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Folder, LogoutTwoTone, UploadFile } from '@mui/icons-material';
+import { Folder, LogoutTwoTone, UploadFileTwoTone } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+
+
+interface IMainMenuItem {
+  label: string;
+  url: `/${string}`;
+  icon: React.ReactNode;
+}
+
+const menuItemsList: IMainMenuItem[] = [
+  {
+    label: 'upload',
+    url: '/dashboard/upload',
+    icon: <UploadFileTwoTone />
+  },
+  {
+    label: 'view files',
+    url: '/dashboard/files',
+    icon: <Folder />
+  }
+]
 
 export const mainListItems = (
-  <React.Fragment>
-    <ListItemButton>
-      <ListItemIcon>
-        <UploadFile />
-      </ListItemIcon>
-      <ListItemText primary="Uploads" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <Folder />
-      </ListItemIcon>
-      <ListItemText primary="Files"/>
-    </ListItemButton>
-  </React.Fragment>
+  <>
+    {menuItemsList.map(item => {
+      return (
+        <Link to={item.url}>
+          <ListItemButton>
+            <ListItemIcon>
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText primary={item.label.toUpperCase()} />
+          </ListItemButton>
+        </Link>
+      );
+    })}
+  </>
 );
 
 export const secondaryListItems = (

@@ -5,7 +5,7 @@ import { useAxios } from '../hooks/useAxios';
 import { FileIcon } from "./FileIcon";
 import { Loader } from "./Loader";
 
-type IFilesResponse = Record<'fileName' | '_id', string>;
+type IFilesResponse = Record<'fileName' | '_id' | 'secure_url', string>;
 type IQueryParams = Record<'pageNumber', string>;
 
 export const ViewFiles: React.FC = () => {
@@ -28,7 +28,6 @@ export const ViewFiles: React.FC = () => {
         });
     }, [pageNumber]);
     const handlePagination = (_event: React.ChangeEvent<unknown>, page: number) => {
-        console.log({ page });
         navigate(`../${page}`)
     }
     console.log({files});
@@ -37,7 +36,7 @@ export const ViewFiles: React.FC = () => {
             <Box display="flex" flexDirection="row" gap={2}>
                 {files && files.map(file => {
                     return (
-                        <FileIcon name={file.fileName} key={file._id} fileId={file._id} />
+                        <FileIcon secure_url={file.secure_url} name={file.fileName} key={file._id} fileId={file._id} />
                     );
                 })}
             </Box>

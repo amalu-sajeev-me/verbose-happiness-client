@@ -11,12 +11,12 @@ export const BreadcrumbsItem: React.FC<IBreadcrumbsItemProps> = ({to, label}) =>
     const { pathname } = useLocation();
     const isActive = pathname === to;
     return (
-        <span>
+        <Typography variant="body2">
             {isActive ? (
-                <Typography color="green">{label}</Typography>
+                <Typography color="darkgrey">{label.toLowerCase()}</Typography>
             ) : (
-                    <Link style={{color: 'green'}} to={to}>{label.toUpperCase()}</Link>
+                    <Link style={{color: 'green'}} to={to}>{label.toLowerCase()}</Link>
             )}
-        </span>    
+        </Typography>    
     );
 }

@@ -1,14 +1,14 @@
-import { Link, Typography } from "@mui/material";
+import React from "react";
+import { GitHub } from "@mui/icons-material";
+import { Box, Link, Typography } from "@mui/material";
 
-export const Copyright = function (props: any) {
+export const Copyright:React.FC = function () {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://github.com/amalu-sajeev.me">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+      <Box display="flex" flexDirection="row" alignItems="center" textAlign="center">
+          <Typography variant="body2" color="darkslateblue" m="auto">
+          {'Copyright © '}
+          <GitHub sx={{fontSize: '1em'}} /> / <Link href="https://github.com/amalu-sajeev-me" target="_blank">amalu-sajeev-me</Link>
+        </Typography>
+      </Box>
   );
 }

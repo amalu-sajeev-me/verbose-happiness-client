@@ -14,6 +14,7 @@ import {
     IconButton,
     Divider,
     Tooltip,
+    useMediaQuery,
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from "react";
 import { PageSelectionBox } from "./PageSelectionBox";
@@ -25,6 +26,7 @@ import { ArrowBack, ArrowForward, Edit } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 
 export const FileOpenView: React.FC = () => {
+    const isMobile = useMediaQuery('(max-width:600px)');
     const [fileName, setFileName] = useState('untitled.pdf');
     const [pageCount, setPageCount] = useState(0);
     const [loading, setLoading] = useState<boolean>(true);
@@ -36,6 +38,7 @@ export const FileOpenView: React.FC = () => {
     const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
     const [moreInfo, setMoreInfo] = useState({} as Record<'docId'| 'ownerId' | 'fileName', string>);
     const boxRef = useRef<HTMLDivElement>(null);
+    const [renameTo, setRenameTo] = useState<string | null>(null);
     useEffect(() => {
         (async () => {
             const apiResponse = await api.get(`/files/${fileId}`);
@@ -55,7 +58,7 @@ export const FileOpenView: React.FC = () => {
             setPageCount(pageCount);
             setLoading(false);
         })();
-    });
+    }, []);
 
     const handleCheckboxChange = (pageNumber: number) => {
         const updatedSet = new Set(selectedPages);
@@ -74,6 +77,15 @@ export const FileOpenView: React.FC = () => {
         if (selectedPages.size < 1) {
             return enqueueSnackbar({variant: 'error', message:'No files selected for extraction'})
         }
+        api.post(`/files/${fileId}/extract`, {
+            pages: [...selectedPages],
+            renameTo
+        }).then(response => {
+            if (response.status === 200) {
+                enqueueSnackbar({ variant: 'success', message: 'file extracted succesfully' });
+                
+            }
+        })
     }
     const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
         if (event.deltaY !== 0) {
@@ -130,6 +142,7 @@ export const FileOpenView: React.FC = () => {
                         {new Array(pageCount).fill(null).map((_title, index) => {
                             return (
                                 <PageSelectionBox
+                                    key={index}
                                     checked={selectedPages.has(index)}
                                     label={`Page Number ${index + 1}`}
                                     onChange={() => handleCheckboxChange(index)} />
@@ -154,7 +167,7 @@ export const FileOpenView: React.FC = () => {
                 <Typography variant="button" color="darkgreen" p={1} mt={3}>
                     Additional Settings
                 </Typography>
-                <Box display="flex" justifyContent="space-between" gap={5}>
+                <Box display="flex" flexDirection={isMobile ? 'column': 'row'} justifyContent="space-between" gap={5}>
                     <Box display="flex" flexDirection="column" alignItems="center" gap={1} p={1}>
                         <TextField
                             variant="outlined"
@@ -162,6 +175,8 @@ export const FileOpenView: React.FC = () => {
                             sx={{ width: '18rem' }}
                             disabled={!overwrite}
                             size="small"
+                            value={renameTo}
+                            onChange={(e)=>setRenameTo(e.target.value)}
                             helperText="this will be included in your extracted file name with the current timestamp"
                         />            
                         <FormControlLabel
@@ -186,7 +201,7 @@ export const FileOpenView: React.FC = () => {
                             overwrite the extracted file name using text field in the additional settings section.
                         </Alert>
                     </Box> */}
-                    {!loading && (<Box mr="6rem">
+                    {!loading && (<Box>
                         <Typography variant="body1" fontWeight="bold" color="lightslategray">More info</Typography>
                         {Object.entries(moreInfo).map(([key, value]) => {
                             return (

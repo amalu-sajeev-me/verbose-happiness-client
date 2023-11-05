@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Divider, Typography } from "@mui/material";
 import { MuiFileInput } from 'mui-file-input';
 import { useSnackbar } from "notistack";
 import { useState } from "react";
@@ -39,6 +39,7 @@ export const FileUpload = () => {
                     value={file}
                     onChange={handleChange}
                     placeholder="accepts only .pdf files"
+                    InputProps={{type: 'file'}}
                 />
                 <Button
                     variant="outlined"
@@ -51,8 +52,53 @@ export const FileUpload = () => {
             </Button>
             <Loader open={loading} />
             </Box>
-            <Box>
-                <Link to="../files" >view all files</Link>
+            <Box mt={5}>
+                <Alert variant="standard" color="info">
+                    <AlertTitle sx={{textAlign: 'left'}}>Info</AlertTitle>
+                    <Typography variant="caption">
+                        Please upload your Pdf files here. And you can view all uploaded files from 
+                        the <Link to="../files">Files</Link> section.
+                    </Typography>
+                </Alert>
+            </Box>
+            <Divider />
+            <Box sx={{textAlign: 'left'}}>
+                <Alert variant="standard" color="success">
+                    <AlertTitle sx={{textAlign: 'left'}}>How to extract pages from your PDF</AlertTitle>
+                    <ol>
+                        <li>
+                            <Typography variant="body2" color="darkslategray">
+                                Upload your source pdf file which the pages needs to be extracted from &nbsp;
+                                <Link to="../files">here</Link>
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body2" color="darkslategray">
+                                Go to <Link to="../files">View Files</Link> Page and find the uploaded file.
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body2" color="darkslategray">
+                                Double click on the file to open the Page extraction window.
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body2" color="darkslategray">
+                                Select the pages you want to extract by cliking on the page numbers.
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body2" color="darkslategray">
+                                optionally you can rename the new file
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body2" color="darkslategray">
+                                click on extract and downlod button.
+                            </Typography>
+                        </li>
+                    </ol>
+                </Alert>
             </Box>
         </Box>
     );
