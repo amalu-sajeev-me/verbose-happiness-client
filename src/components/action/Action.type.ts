@@ -3,7 +3,7 @@ export type EnumType<T> = T[keyof T];
 export interface IAction<TActionTypesEnum> {
     type: TActionTypesEnum;
     payload: unknown;
-};
+}
 
 export interface IFileOpenViewState {
     fileName: string;
