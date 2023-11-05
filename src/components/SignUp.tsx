@@ -149,7 +149,7 @@ export const Signup = function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Copyright />
       </Container>
       <Loader open={loading} />
     </ThemeProvider>

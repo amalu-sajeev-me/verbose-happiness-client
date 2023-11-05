@@ -1,8 +1,6 @@
 
 import { Copyright } from './Copyright';
 import {
-    createTheme,
-    ThemeProvider,
     Container,
     CssBaseline,
     Box,
@@ -13,18 +11,17 @@ import {
     Grid,
 } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { IApiResponse, useAxios } from '../hooks/useAxios';
 import { Loader } from './Loader';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
-
-
-const defaultTheme = createTheme();
+import { useAuth } from './auth/AuthContext';
 
 export const Login = function () {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState<boolean>(false);
+  const { login, isAuthenticated } = useAuth();
   const api = useAxios();
   const navigate = useNavigate();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -39,8 +36,8 @@ export const Login = function () {
       const apiResponse = (await api.post(`/user/login`, payload, { validateStatus: Boolean }));
       const {responseData} = apiResponse.data as IApiResponse<Record<'token', string>>;
       if (apiResponse.status === 200) {
-          localStorage.setItem('auth-token', responseData.token);
-          navigate('/dashboard');
+        login(responseData.token);
+        navigate('/dashboard');
       } else throw new Error('invalid credentials')
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'error occured';
@@ -53,8 +50,9 @@ export const Login = function () {
     
   };
 
-  return (
-    <ThemeProvider theme={defaultTheme}>
+  return isAuthenticated
+    ? (<Navigate to="/dashboard" />)
+    : (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -109,9 +107,8 @@ export const Login = function () {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Copyright />
+        <Loader open={loading} />
       </Container>
-      <Loader open={loading} />
-    </ThemeProvider>
   );
 }

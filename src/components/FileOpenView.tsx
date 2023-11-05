@@ -16,7 +16,7 @@ import {
     Tooltip,
     useMediaQuery,
 } from '@mui/material';
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { PageSelectionBox } from "./PageSelectionBox";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAxios } from '../hooks/useAxios';
@@ -24,29 +24,41 @@ import { PDFDocument } from 'pdf-lib';
 import { Loader } from './Loader';
 import { ArrowBack, ArrowForward, Edit } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
+import { ReducerService } from './action/ReducerService';
+import { FILE_OPEN_VIEW_ACTIONS, IFileOpenViewState } from './action/Action.type';
+
+
+const initialState: IFileOpenViewState = {
+    fileName: 'untitled.pdf',
+    pageCount: 0,
+    loading: true,
+    overWrite: false,
+    selectedPages: new Set<number>(),
+    renameTo: null,
+    moreInfo: undefined
+}
 
 export const FileOpenView: React.FC = () => {
     const isMobile = useMediaQuery('(max-width:600px)');
-    const [fileName, setFileName] = useState('untitled.pdf');
-    const [pageCount, setPageCount] = useState(0);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [overwrite, setOverwrite] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate()
     const {fileId} = useParams() as {fileId: string};
     const api = useAxios();
-    const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
-    const [moreInfo, setMoreInfo] = useState({} as Record<'docId'| 'ownerId' | 'fileName', string>);
     const boxRef = useRef<HTMLDivElement>(null);
-    const [renameTo, setRenameTo] = useState<string | null>(null);
+    const [state, dispatch] = useReducer(ReducerService.fileOpenView, initialState);
+    const { fileName, loading, overWrite, pageCount, renameTo, selectedPages, moreInfo } = state;
+    const toggle = (fieldName: keyof IFileOpenViewState) => {
+        dispatch({
+            type: FILE_OPEN_VIEW_ACTIONS.ON_OR_OFF_TOGGLE,
+            payload: { fieldName }
+        });
+    }
     useEffect(() => {
         (async () => {
             const apiResponse = await api.get(`/files/${fileId}`);
             const secure_url = apiResponse.data.responseData.storageData.secure_url;
-            const fileName = apiResponse.data.responseData.fileName;
-            setFileName(fileName);
+            const fileName = apiResponse.data.responseData.fileName as string;
             const {data: pdfBytes} = await api.get(secure_url, {responseType: 'arraybuffer'});
-            console.log({ pdfBytes });
             const pdfDoc = await PDFDocument.load(pdfBytes);
             const pageCount = pdfDoc.getPageCount();
             const moreInfo = {
@@ -54,36 +66,39 @@ export const FileOpenView: React.FC = () => {
                 docId: fileId,
                 ownerId: apiResponse.data.responseData.owner
             };
-            setMoreInfo(moreInfo);
-            setPageCount(pageCount);
-            setLoading(false);
+            dispatch({
+                type: FILE_OPEN_VIEW_ACTIONS.FETCH,
+                payload: { fileName, moreInfo, loading: false, pageCount }
+            })
         })();
     }, []);
 
     const handleCheckboxChange = (pageNumber: number) => {
-        const updatedSet = new Set(selectedPages);
-        if (updatedSet.has(pageNumber)) updatedSet.delete(pageNumber);
-        else updatedSet.add(pageNumber);
-        setSelectedPages(updatedSet);
+        dispatch({
+            type: FILE_OPEN_VIEW_ACTIONS.FILE_SELECTION,
+            payload: {
+                pageNumber 
+            }
+        })
     }
     const handleClose = () => {
         navigate(-1);
     }
     const toggleOverWrite = () => {
-        if (overwrite) setOverwrite(false);
-        else setOverwrite(true)
+        toggle('overWrite');
     }
     const onExtractButtonClick = () => {
         if (selectedPages.size < 1) {
             return enqueueSnackbar({variant: 'error', message:'No files selected for extraction'})
         }
+        toggle('loading');
         api.post(`/files/${fileId}/extract`, {
             pages: [...selectedPages],
             renameTo
         }).then(response => {
             if (response.status === 200) {
                 enqueueSnackbar({ variant: 'success', message: 'file extracted succesfully' });
-                
+                toggle('loading');
             }
         })
     }
@@ -173,10 +188,12 @@ export const FileOpenView: React.FC = () => {
                             variant="outlined"
                             placeholder="file name prefix (without .pdf)"
                             sx={{ width: '18rem' }}
-                            disabled={!overwrite}
+                            disabled={!overWrite}
                             size="small"
                             value={renameTo}
-                            onChange={(e)=>setRenameTo(e.target.value)}
+                            onChange={(e) => {
+                                dispatch({type: FILE_OPEN_VIEW_ACTIONS.FETCH, payload: {renameTo: e.target.value}})
+                            }}
                             helperText="this will be included in your extracted file name with the current timestamp"
                         />            
                         <FormControlLabel
@@ -186,7 +203,7 @@ export const FileOpenView: React.FC = () => {
                             control={
                                 <Checkbox
                                     color="warning"
-                                    checked={overwrite}
+                                    checked={overWrite}
                                     size="small"
                                     onChange={toggleOverWrite}
                                 />}
@@ -203,7 +220,7 @@ export const FileOpenView: React.FC = () => {
                     </Box> */}
                     {!loading && (<Box>
                         <Typography variant="body1" fontWeight="bold" color="lightslategray">More info</Typography>
-                        {Object.entries(moreInfo).map(([key, value]) => {
+                        {Object.entries(moreInfo || {}).map(([key, value]) => {
                             return (
                                 <Box display="flex" gap={3}>
                                     <Typography variant="button" color="darkgreen">{key}</Typography>

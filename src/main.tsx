@@ -12,6 +12,8 @@ import { FileUpload } from './components/FileUpload.tsx';
 import { ViewFiles } from './components/ViewFiles.tsx';
 import { FileOpenView } from './components/FileOpenView.tsx';
 import App from './App.tsx';
+import { AuthProvider } from './components/auth/AuthContext.tsx';
+import { Logout } from './components/Logout.tsx';
 
 
 
@@ -36,6 +38,7 @@ const routerFromElements = createRoutesFromElements(
         <Route path=":fileId" element={<FileOpenView />} />
         </Route>
       </Route>
+      <Route path="logout" element={<Logout />} />
     </Route>
 );
 
@@ -45,7 +48,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <SnackbarProvider>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </SnackbarProvider>
     </ThemeProvider>
   </React.StrictMode>,

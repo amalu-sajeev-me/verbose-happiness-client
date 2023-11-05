@@ -4,10 +4,11 @@ import {
 import { Copyright } from '../Copyright';
 import { Drawer } from '../Drawer';
 import { Page } from '../Page';
+import { withAuthGuard } from '../auth/withAuthGuard';
 
 
 
-export function Dashboard() {
+function DashboardView() {
 
   return (
     <Box sx={{
@@ -40,3 +41,5 @@ export function Dashboard() {
       </Box>
   );
 }
+
+export const Dashboard = withAuthGuard(DashboardView);
