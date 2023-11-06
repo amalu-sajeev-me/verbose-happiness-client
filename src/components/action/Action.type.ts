@@ -13,6 +13,7 @@ export interface IFileOpenViewState {
     selectedPages: Set<number>;
     renameTo: string | null;
     moreInfo?: Record<'docId' | 'ownerId' | 'fileName', string>;
+    extractedDownloadUrl: string | null;
 }
 
 

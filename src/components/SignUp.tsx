@@ -58,7 +58,7 @@ export const Signup = function SignUp() {
             const { fieldErrors = {} } = info as unknown as {fieldErrors: Record<string, string>} || {};
             console.log({ info, message });
             if (fieldErrors) setFieldErrors(fieldErrors);
-            throw new Error(message);
+            throw new Error(typeof info === 'string' ? info: message || "invalid payload");
         }
     } catch (error) {
         const errmessage = error instanceof Error ? error.message : '';

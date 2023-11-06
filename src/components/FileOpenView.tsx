@@ -15,6 +15,7 @@ import {
     Divider,
     Tooltip,
     useMediaQuery,
+    Link,
 } from '@mui/material';
 import React, { useEffect, useReducer, useRef } from "react";
 import { PageSelectionBox } from "./PageSelectionBox";
@@ -35,7 +36,8 @@ const initialState: IFileOpenViewState = {
     overWrite: false,
     selectedPages: new Set<number>(),
     renameTo: null,
-    moreInfo: undefined
+    moreInfo: undefined,
+    extractedDownloadUrl: null,
 }
 
 export const FileOpenView: React.FC = () => {
@@ -46,7 +48,7 @@ export const FileOpenView: React.FC = () => {
     const api = useAxios();
     const boxRef = useRef<HTMLDivElement>(null);
     const [state, dispatch] = useReducer(ReducerService.fileOpenView, initialState);
-    const { fileName, loading, overWrite, pageCount, renameTo, selectedPages, moreInfo } = state;
+    const { fileName, loading, overWrite, pageCount, renameTo, selectedPages, moreInfo, extractedDownloadUrl } = state;
     const toggle = (fieldName: keyof IFileOpenViewState) => {
         dispatch({
             type: FILE_OPEN_VIEW_ACTIONS.ON_OR_OFF_TOGGLE,
@@ -97,6 +99,11 @@ export const FileOpenView: React.FC = () => {
             renameTo
         }).then(response => {
             if (response.status === 200) {
+                const secureUrl = response.data?.responseData?.storageData?.secure_url as string;
+                if (secureUrl) dispatch({
+                    type: FILE_OPEN_VIEW_ACTIONS.FETCH,
+                    payload: { extractedDownloadUrl: secureUrl }
+                });
                 enqueueSnackbar({ variant: 'success', message: 'file extracted succesfully' });
                 toggle('loading');
             }
@@ -123,7 +130,7 @@ export const FileOpenView: React.FC = () => {
                     maxWidth="lg"
                     fullScreen
                 >
-                    <DialogTitle variant="h5" color="InfoText">
+                    <DialogTitle variant="h5" color="darkslategray">
                         {fileName.toUpperCase()+ "  "}
                         <Tooltip title="Read only">
                             <Edit fontSize="small" />
@@ -157,9 +164,9 @@ export const FileOpenView: React.FC = () => {
                             return (
                                 <PageSelectionBox
                                     key={index}
-                                    checked={selectedPages.has(index)}
+                                    checked={selectedPages.has(index + 1)}
                                     label={`Page Number ${index + 1}`}
-                                    onChange={() => handleCheckboxChange(index)} />
+                                    onChange={() => handleCheckboxChange(index + 1)} />
                             );
                         })}
                     </Box>
@@ -230,8 +237,15 @@ export const FileOpenView: React.FC = () => {
                     </Box>)}
                 </Box>
                 <Box p={1}>
-                    <Button onClick={onExtractButtonClick} variant="contained" color="success">Extract and Download Pdf</Button>
+                    <Button onClick={onExtractButtonClick} variant="contained" color="success">Extract Pdf</Button>
                 </Box>
+                {extractedDownloadUrl && (
+                    <Box p={1}>
+                        <Link variant='button' sx={{
+                            color: 'green'
+                        }} href={extractedDownloadUrl} target="_blank">download</Link>
+                    </Box>
+                )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} variant="contained" color="success">Go Back</Button>
