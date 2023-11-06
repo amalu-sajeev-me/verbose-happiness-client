@@ -6,9 +6,10 @@ import {
   IconButton,
   Divider,
   List,
-  Drawer as MuiDrawer
+  Drawer as MuiDrawer,
+  useMediaQuery
 } from "@mui/material";
-import { mainListItems, secondaryListItems } from "./dashboard/ListItems";
+import { mainListItems } from "./dashboard/ListItems";
 import { useState } from "react";
 
 const drawerWidth: number = 240;
@@ -40,10 +41,10 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 );
 
 export const Drawer = () => {
-  
-  const [open, setOpen] = useState(true);
+  const isMobile = useMediaQuery('(max-width:600px)');
+  const [open, setOpen] = useState<boolean>(!isMobile && true);
   const toggleDrawer = () => {
-    setOpen(!open);
+    !isMobile && setOpen(!open);
   };
   return (
     <Box sx={{ display: 'flex' }}>
@@ -64,7 +65,6 @@ export const Drawer = () => {
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
           </List>
         </StyledDrawer>
     </Box>

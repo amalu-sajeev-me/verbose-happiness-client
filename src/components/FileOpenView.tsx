@@ -152,7 +152,6 @@ export const FileOpenView: React.FC = () => {
                         }}
                         ref={boxRef}
                         onWheel={handleScroll}
-                        // onScroll={handleScroll}
                     >
                         {new Array(pageCount).fill(null).map((_title, index) => {
                             return (

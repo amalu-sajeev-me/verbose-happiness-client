@@ -1,7 +1,7 @@
 import { CloudDownloadOutlined, PictureAsPdfTwoTone } from "@mui/icons-material";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface IFileIconProps {
     name: string;
@@ -10,8 +10,6 @@ interface IFileIconProps {
 }
 export const FileIcon: React.FC<IFileIconProps> = ({ name, fileId, secure_url }) => {
     const navigate = useNavigate();
-    const params = useParams();
-    console.log(params)
     const onFileOpen = () => {
         navigate(`../../view/${fileId}`);
     }
@@ -34,11 +32,14 @@ export const FileIcon: React.FC<IFileIconProps> = ({ name, fileId, secure_url })
                         opacity: 1,
                     }
                 }}
+                maxWidth="6rem"
+                maxHeight="8rem"
                 onDoubleClick={onFileOpen}
+                textOverflow="clip"
                 position="relative"
             >
                 <PictureAsPdfTwoTone fontSize="large" color="primary" />
-                <Typography variant="caption" color="ActiveCaption">{name}</Typography>
+                <Typography variant="caption" fontWeight="bolder" color="darkslategray">{name}</Typography>
                 <IconButton
                     className="download-btn"
                     sx={{
@@ -48,7 +49,6 @@ export const FileIcon: React.FC<IFileIconProps> = ({ name, fileId, secure_url })
                         transition: 'opacity 0.2s ease-in-out',
                         outline: 'none !important'
                     }}
-                    // onClick={onDownload}
                 >
                     <Tooltip title="click here to download">
                         <a href={secure_url} download>

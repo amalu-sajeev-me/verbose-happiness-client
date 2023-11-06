@@ -1,9 +1,8 @@
 import * as React from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { Folder, LogoutTwoTone, UploadFileTwoTone } from '@mui/icons-material';
+import { Folder, LogoutRounded, UploadFileTwoTone } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { Tooltip, Typography } from '@mui/material';
 
 
 interface IMainMenuItem {
@@ -16,12 +15,17 @@ const menuItemsList: IMainMenuItem[] = [
   {
     label: 'upload',
     url: '/dashboard/upload',
-    icon: <UploadFileTwoTone />
+    icon: <UploadFileTwoTone color="primary" />
   },
   {
     label: 'view files',
     url: '/dashboard/files',
-    icon: <Folder />
+    icon: <Folder color="primary" />
+  },
+  {
+    label: 'logout',
+    url: '/logout',
+    icon: <LogoutRounded color="warning" />
   }
 ]
 
@@ -30,28 +34,16 @@ export const mainListItems = (
     {menuItemsList.map(item => {
       return (
         <Link to={item.url}>
-          <ListItemButton>
-            <ListItemIcon>
+          <Tooltip title={item.label}>
+            <ListItemButton sx={{display: 'flex', alignItems: 'center', gap: 4}}>
               {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.label.toUpperCase()} />
-          </ListItemButton>
+              <Typography variant="button" color="darkslategray">
+              {item.label}
+              </Typography>
+            </ListItemButton>
+          </Tooltip>
         </Link>
       );
     })}
   </>
-);
-
-export const secondaryListItems = (
-  <React.Fragment>
-    {/* <ListSubheader component="div" inset>
-      Saved reports
-    </ListSubheader> */}
-    <ListItemButton>
-      <ListItemIcon>
-        <LogoutTwoTone />
-      </ListItemIcon>
-      <ListItemText primary="Logout" />
-    </ListItemButton>
-  </React.Fragment>
 );

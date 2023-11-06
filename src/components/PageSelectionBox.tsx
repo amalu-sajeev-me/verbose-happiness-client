@@ -17,7 +17,7 @@ const SelectionBox: React.FC<ISelectionBoxProps> = ({label}) => {
             <Box>
                 <ArticleOutlined fontSize="large" />
             </Box>
-            <Typography variant="caption" color="ActiveCaption">{label}</Typography>
+            <Typography variant="caption" color="darkslategray" fontWeight="bolder">{label}</Typography>
         </Box>
     );
 }
