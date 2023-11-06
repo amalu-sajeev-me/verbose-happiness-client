@@ -14,6 +14,7 @@ import { FileOpenView } from './components/FileOpenView.tsx';
 import App from './App.tsx';
 import { AuthProvider } from './components/auth/AuthContext.tsx';
 import { Logout } from './components/Logout.tsx';
+import { FileSwapView } from './components/swap/FileSwapView.tsx';
 
 
 
@@ -36,6 +37,9 @@ const routerFromElements = createRoutesFromElements(
         </Route>
         <Route path="view">
         <Route path=":fileId" element={<FileOpenView />} />
+        </Route>
+        <Route path="swap">
+        <Route path=":fileId" element={<FileSwapView />} />
         </Route>
       </Route>
       <Route path="logout" element={<Logout />} />
