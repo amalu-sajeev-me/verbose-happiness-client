@@ -24,6 +24,7 @@ const defaultTheme = createTheme();
 
 export const Signup = function SignUp() {
   const { enqueueSnackbar } = useSnackbar();
+  const [fieldErrors, setFieldErrors] = useState({} as Record<string, string>);
   const [loading, setLoading] = useState<boolean>(false);
     const api = useAxios();
     const navigate = useNavigate();
@@ -53,8 +54,11 @@ export const Signup = function SignUp() {
               navigate('/');
           }, 1000);
         } else {
-            const { info } = responseData.error as { message: string;  info: string};
-            throw new Error(info);
+            const { info, message } = responseData.error as { message: string; info: string };
+            const { fieldErrors = {} } = info as unknown as {fieldErrors: Record<string, string>} || {};
+            console.log({ info, message });
+            if (fieldErrors) setFieldErrors(fieldErrors);
+            throw new Error(message);
         }
     } catch (error) {
         const errmessage = error instanceof Error ? error.message : '';
@@ -97,6 +101,8 @@ export const Signup = function SignUp() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  error={!!fieldErrors['firstName']}
+                  helperText={fieldErrors['firstName']}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -107,6 +113,8 @@ export const Signup = function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  error={!!fieldErrors['lastName']}
+                  helperText={fieldErrors['lastName']}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -117,6 +125,8 @@ export const Signup = function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={!!fieldErrors['email']}
+                  helperText={fieldErrors['email']}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -128,6 +138,8 @@ export const Signup = function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={!!fieldErrors['password']}
+                  helperText={fieldErrors['password']}
                 />
               </Grid>
             </Grid>
